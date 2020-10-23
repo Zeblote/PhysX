@@ -819,6 +819,13 @@ void PersistentAggregateAggregatePair::findOverlaps(PairArray& pairs, const PxBo
 #endif
 	)
 {
+	if(!mAggregate0->getNbAggregated() || !mAggregate1->getNbAggregated())
+		return;
+
+	if((groups[mAggregate0->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS &&
+		(groups[mAggregate1->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS)
+		return;
+
 	mAggregate0->getSortedMinBounds();
 	mAggregate1->getSortedMinBounds();
 	doBipartiteBoxPruning_Leaf(&pairs, lut, mAggregate0, mAggregate1, groups);
@@ -830,6 +837,10 @@ bool PersistentAggregateAggregatePair::update(AABBManager& manager, BpCacheData*
 		return true;
 
 	if(!mAggregate0->getNbAggregated() || !mAggregate1->getNbAggregated())	// PT: needed with lazy empty actors
+		return true;
+
+	if((manager.mGroups[mAggregate0->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS &&
+		(manager.mGroups[mAggregate1->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS)
 		return true;
 
 	if(mAggregate0->isDirty() || mAggregate1->isDirty())
