@@ -839,10 +839,6 @@ bool PersistentAggregateAggregatePair::update(AABBManager& manager, BpCacheData*
 	if(!mAggregate0->getNbAggregated() || !mAggregate1->getNbAggregated())	// PT: needed with lazy empty actors
 		return true;
 
-	if((manager.mGroups[mAggregate0->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS &&
-		(manager.mGroups[mAggregate1->getAggregated(0)] & 3) == Bp::FilterGroup::eSTATICS)
-		return true;
-
 	if(mAggregate0->isDirty() || mAggregate1->isDirty())
 		manager.updatePairs(*this, data);
 
