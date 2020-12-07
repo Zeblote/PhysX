@@ -3,7 +3,7 @@ IF(NOT $ENV{PM_PACKAGES_ROOT} EQUAL "")
 
 	INCLUDE(CMakeForceCompiler)
 
-	SET(LINUX_ROOT "$ENV{LINUX_MULTIARCH_ROOT}/../v16_clang-9.0.1-centos7/x86_64-unknown-linux-gnu")
+	SET(LINUX_ROOT "$ENV{LINUX_MULTIARCH_ROOT}/../v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu")
 	STRING(REGEX REPLACE "\\\\" "/" LINUX_ROOT ${LINUX_ROOT})
 
 	message (STATUS "LINUX_ROOT is '${LINUX_ROOT}'")
