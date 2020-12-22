@@ -110,8 +110,6 @@ namespace Sc
 												{
 													getScene().getElementIDPool().releaseID(mElementID);
 												}
-	public:
-						ElementSim*				mNextInActor;
 	private:
 						ActorSim&				mActor;
 

@@ -103,7 +103,8 @@ ShapeCore::ShapeCore(const PxGeometry& geometry, PxShapeFlags shapeFlags, const 
 ShapeCore::ShapeCore(const PxEMPTY) : 
 	mQueryFilterData		(PxEmpty),
 	mSimulationFilterData	(PxEmpty),
-	mCore					(PxEmpty)
+	mCore					(PxEmpty),
+	mSimIndex				(UINT32_MAX)
 { 
 	mCore.mOwnsMaterialIdxMemory	= false;
 }

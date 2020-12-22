@@ -76,7 +76,6 @@ Sc::ElementSimInteraction* Sc::ElementSim::ElementInteractionReverseIterator::ge
 }
 
 Sc::ElementSim::ElementSim(ActorSim& actor) :
-	mNextInActor	(NULL),
 	mActor			(actor),
 	mInBroadPhase	(false)
 {

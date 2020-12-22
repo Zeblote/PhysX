@@ -157,13 +157,11 @@ void Sc::ArticulationSim::markShapesUpdated(Cm::BitMapPinned* shapeChangedMap)
 {
 	for (PxU32 a = 0; a < mBodies.size(); ++a)
 	{
-		Sc::ElementSim* current = mBodies[a]->getElements_();
-		while (current)
+		for (ElementSim* current : mBodies[a]->getElements_())
 		{
 			Sc::ShapeSim* sim = static_cast<Sc::ShapeSim*>(current);
 			if (sim->isInBroadPhase())
 				shapeChangedMap->growAndSet(sim->getElementID());
-			current = current->mNextInActor;
 		}
 	}
 }

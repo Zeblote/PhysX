@@ -127,6 +127,8 @@ namespace Sc
 						PxReal						mRestOffset;			// same as the API property of the same name
 						PxReal						mTorsionalRadius;
 						PxReal						mMinTorsionalPatchRadius;
+	public:
+						PxU32						mSimIndex;
 	};
 
 } // namespace Sc

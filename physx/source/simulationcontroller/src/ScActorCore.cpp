@@ -78,10 +78,8 @@ void Sc::ActorCore::reinsertShapes()
 	if(!mSim)
 		return;
 
-	ElementSim* current = mSim->getElements_();
-	while(current)
+	for (ElementSim* current : mSim->getElements_())
 	{
 		static_cast<ShapeSim*>(current)->reinsertBroadPhase();
-		current = current->mNextInActor;
 	}
 }

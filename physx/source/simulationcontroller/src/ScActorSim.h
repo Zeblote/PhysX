@@ -73,10 +73,10 @@ namespace Sc
 		PX_FORCE_INLINE	Interaction**		getActorInteractions()		const	{ return mInteractions.begin();	}
 
 		// Get first element in the actor (linked list)
-		PX_FORCE_INLINE	ElementSim*			getElements_()						{ return mFirstElement;		}
-		PX_FORCE_INLINE	const ElementSim*	getElements_()				const	{ return mFirstElement;		}
+		PX_FORCE_INLINE	Ps::Array<ElementSim*>&			getElements_()			{ return mElements;	}
+		PX_FORCE_INLINE	const Ps::Array<ElementSim*>&	getElements_()	const	{ return mElements;	}
 
-		PX_FORCE_INLINE PxU32				getElementCount()			const	{ return mElementCount; }
+		PX_FORCE_INLINE PxU32				getElementCount()			const	{ return mElements.size(); }
 
 		// Get the type ID of the actor
 		PX_FORCE_INLINE	PxActorType::Enum	getActorType()				const	{ return mCore.getActorCoreType();	}
@@ -110,7 +110,8 @@ namespace Sc
 											mInteractions;
 
 						ElementSim*			mFirstElement;
-						PxU32				mElementCount;
+
+						Ps::Array<ElementSim*> mElements;
 
 						Scene&				mScene;
 

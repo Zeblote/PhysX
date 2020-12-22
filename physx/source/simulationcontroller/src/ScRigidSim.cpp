@@ -64,22 +64,18 @@ void RigidSim::notifyShapesOfTransformChange()
 {
 	if(0)
 	{
-		ElementSim* current = getElements_();
-		while(current)
+		for (ElementSim* current : getElements_())
 		{
 			ShapeSim* sim = static_cast<ShapeSim*>(current);
 			sim->onVolumeOrTransformChange(false);
-			current = current->mNextInActor;
 		}
 	}
 	else
 	{
-		ElementSim* current = getElements_();
-		while(current)
+		for (ElementSim* current : getElements_())
 		{
 			ShapeSim* sim = static_cast<ShapeSim*>(current);
 			sim->markBoundsForUpdate(false);
-			current = current->mNextInActor;
 		}
 
 		notifyActorInteractionsOfTransformChange(*this);

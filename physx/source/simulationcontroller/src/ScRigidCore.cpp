@@ -39,17 +39,7 @@ using namespace Sc;
 
 static ShapeSim& getSimForShape(ShapeCore& core, const ActorSim& actorSim)
 {
-	const ElementSim* current = actorSim.getElements_();
-	while(current)
-	{
-		const ShapeSim* sim = static_cast<const ShapeSim*>(current);
-		if(&sim->getCore() == &core)
-			return *const_cast<ShapeSim*>(sim);
-		current = current->mNextInActor;
-	}
-
-	PX_ASSERT(0); // should never fail
-	return *reinterpret_cast<ShapeSim*>(1);
+	return *static_cast<ShapeSim*>(actorSim.getElements_()[core.mSimIndex]);
 }
 
 RigidCore::RigidCore(const PxActorType::Enum type) 

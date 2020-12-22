@@ -185,11 +185,9 @@ void BodySim::updateCached(Cm::BitMapPinned* shapeChangedMap)
 {
 	if(!(mLLBody.mInternalFlags & PxsRigidBody::eFROZEN))
 	{
-		ElementSim* current = getElements_();
-		while(current)
+		for (ElementSim* current : getElements_())
 		{
 			static_cast<ShapeSim*>(current)->updateCached(0, shapeChangedMap);
-			current = current->mNextInActor;
 		}
 	}
 }
@@ -198,11 +196,9 @@ void BodySim::updateCached(PxsTransformCache& transformCache, Bp::BoundsArray& b
 {
 	PX_ASSERT(!(mLLBody.mInternalFlags & PxsRigidBody::eFROZEN));	// PT: should not be called otherwise
 
-	ElementSim* current = getElements_();
-	while(current)
+	for (ElementSim* current : getElements_())
 	{
 		static_cast<ShapeSim*>(current)->updateCached(transformCache, boundsArray);
-		current = current->mNextInActor;
 	}
 }
 
@@ -215,11 +211,9 @@ void BodySim::updateContactDistance(PxReal* contactDistance, const PxReal dt, Bp
 		const PxVec3 aVel = getLowLevelBody().getAngularVelocity();
 		const PxReal inflation = linVel.magnitude() * dt;
 
-		ElementSim* current = getElements_();
-		while(current)
+		for (ElementSim* current : getElements_())
 		{
 			static_cast<ShapeSim*>(current)->updateContactDistance(contactDistance, inflation, aVel, dt, boundsArray);
-			current = current->mNextInActor;
 		}
 	}
 }
@@ -310,12 +304,11 @@ void BodySim::postSetKinematicTarget()
 	clearInternalFlag(BF_KINEMATIC_SURFACE_VELOCITY);
 }
 
-static void updateBPGroup(ElementSim* current)
+static void updateBPGroup(Ps::Array<ElementSim*>& array)
 {
-	while(current)
+	for (ElementSim* current : array)
 	{
 		static_cast<ShapeSim*>(current)->updateBPGroup();
-		current = current->mNextInActor;
 	}
 }
 
@@ -954,33 +947,27 @@ void BodySim::createSqBounds()
 
 	PX_ASSERT(!isFrozen());
 	
-	ElementSim* current = getElements_();
-	while(current)
+	for (ElementSim* current : getElements_())
 	{
 		static_cast<ShapeSim*>(current)->createSqBounds();
-		current = current->mNextInActor;
 	}
 }
 
 void BodySim::destroySqBounds()
 {
-	ElementSim* current = getElements_();
-	while(current)
+	for (ElementSim* current : getElements_())
 	{
 		static_cast<ShapeSim*>(current)->destroySqBounds();
-		current = current->mNextInActor;
 	}
 }
 
 void BodySim::freezeTransforms(Cm::BitMapPinned* shapeChangedMap)
 {
-	ElementSim* current = getElements_();
-	while(current)
+	for (ElementSim* current : getElements_())
 	{
 		ShapeSim* sim = static_cast<ShapeSim*>(current);
 		sim->updateCached(PxsTransformFlag::eFROZEN, shapeChangedMap);
 		sim->destroySqBounds();
-		current = current->mNextInActor;
 	}
 }
 

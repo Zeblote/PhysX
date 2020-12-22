@@ -33,12 +33,11 @@
 #include "ScElementSim.h"
 #include "ScScene.h"
 #include "ScInteraction.h"
+#include "ScShapeSim.h"
 
 using namespace physx;
 
 Sc::ActorSim::ActorSim(Scene& scene, ActorCore& core) :
-	mFirstElement	(NULL),
-	mElementCount	(0),
 	mScene			(scene),
 	mCore			(core)
 {
@@ -68,31 +67,20 @@ void Sc::ActorSim::unregisterInteractionFromActor(Interaction* interaction)
 
 void Sc::ActorSim::onElementAttach(ElementSim& element)
 {
-	element.mNextInActor = mFirstElement;
-	mFirstElement = &element;
-	mElementCount++;
+	mElements.pushBack(&element);
 }
 
 void Sc::ActorSim::onElementDetach(ElementSim& element)
 {
-	PX_ASSERT(mFirstElement);	// PT: else we shouldn't be called
-	ElementSim* currentElem = mFirstElement;
-	ElementSim* previousElem = NULL;
-	while(currentElem)
+	PxU32 index = reinterpret_cast<ShapeSim&>(element).getCore().mSimIndex;
+	mElements.replaceWithLast(index);
+
+	if (index < mElements.size())
 	{
-		if(currentElem==&element)
-		{
-			if(previousElem)
-				previousElem->mNextInActor = currentElem->mNextInActor;
-			else
-				mFirstElement = currentElem->mNextInActor;
-			mElementCount--;
-			return;
-		}
-		previousElem = currentElem;
-		currentElem = currentElem->mNextInActor;
+		ShapeSim* shape = static_cast<ShapeSim*>(mElements[index]);
+		ShapeCore& core = const_cast<ShapeCore&>(shape->getCore());
+		core.mSimIndex = index;
 	}
-	PX_ASSERT(0);
 }
 
 // PT: TODO: refactor with Sc::ParticlePacketShape::reallocInteractions - sschirm: particles are gone

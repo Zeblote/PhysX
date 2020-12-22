@@ -127,6 +127,7 @@ ShapeSim::ShapeSim(RigidSim& owner, const ShapeCore& core) :
 	mId = scScene.getShapeIDTracker().createID();
 
 	initSubsystemsDependingOnElementID();
+	const_cast<ShapeCore&>(core).mSimIndex = owner.getElements_().size() - 1;
 }
 
 ShapeSim::~ShapeSim()
