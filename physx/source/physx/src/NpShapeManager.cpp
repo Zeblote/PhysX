@@ -110,7 +110,9 @@ void NpShapeManager::attachShape(NpShape& shape, PxRigidActor& actor)
 	PtrTableStorageManager& sm = NpFactory::getInstance().getPtrTableStorageManager();
 
 	const PxU32 index = getNbShapes();
-	mShapes.add(&shape, sm);	
+	mShapes.add(&shape, sm);
+	PX_ASSERT(shape.mIndexInActor == 0xffffffff);
+	shape.mIndexInActor = index;
 	mSceneQueryData.add(reinterpret_cast<void*>(size_t(SQ_INVALID_PRUNER_DATA)), sm);
 
 	NpScene* scene = NpActor::getAPIScene(actor);		
@@ -128,7 +130,7 @@ bool NpShapeManager::detachShape(NpShape& s, PxRigidActor& actor, bool wakeOnLos
 {
 	PX_ASSERT(!mPruningStructure);
 
-	const PxU32 index = mShapes.find(&s);
+	const PxU32 index = s.mIndexInActor;
 	if(index==0xffffffff)
 		return false;
 
@@ -162,7 +164,14 @@ bool NpShapeManager::detachShape(NpShape& s, PxRigidActor& actor, bool wakeOnLos
 	PtrTableStorageManager& sm = NpFactory::getInstance().getPtrTableStorageManager();
 	mShapes.replaceWithLast(index, sm);
 	mSceneQueryData.replaceWithLast(index, sm);
-	
+
+	if (index < mShapes.getCount())
+	{
+		static_cast<NpShape*>(mShapes.getPtrs()[index])->mIndexInActor = index;
+	}
+
+	s.mIndexInActor = 0xffffffff;
+
 	s.onActorDetach();
 	return true;
 }
@@ -178,7 +187,10 @@ void NpShapeManager::detachAll(NpScene* scene, const PxRigidActor& actor)
 
 	// actor cleanup in Scb/Sc will remove any outstanding references corresponding to sim objects, so we don't need to do that here.
 	for(PxU32 i=0;i<nbShapes;i++)
+	{
 		shapes[i]->onActorDetach();
+		shapes[i]->mIndexInActor = 0xffffffff;
+	}
 
 	PtrTableStorageManager& sm = NpFactory::getInstance().getPtrTableStorageManager();
 
@@ -239,14 +251,14 @@ void NpShapeManager::releaseExclusiveUserReferences()
 void NpShapeManager::setupSceneQuery(SceneQueryManager& sqManager, const PxRigidActor& actor, const NpShape& shape)
 { 
 	PX_ASSERT(shape.getFlags() & PxShapeFlag::eSCENE_QUERY_SHAPE);
-	const PxU32 index = mShapes.find(&shape);
+	const PxU32 index = shape.mIndexInActor;
 	PX_ASSERT(index!=0xffffffff);
 	setupSceneQuery(sqManager, actor, index);
 }
 
 void NpShapeManager::teardownSceneQuery(SceneQueryManager& sqManager, const NpShape& shape)
 {
-	const PxU32 index = mShapes.find(&shape);
+	const PxU32 index = shape.mIndexInActor;
 	PX_ASSERT(index!=0xffffffff);
 	teardownSceneQuery(sqManager, index);
 }
@@ -326,7 +338,7 @@ void NpShapeManager::markAllSceneQueryForUpdate(SceneQueryManager& sqManager, co
 
 Sq::PrunerData NpShapeManager::findSceneQueryData(const NpShape& shape) const
 {
-	const PxU32 index = mShapes.find(&shape);
+	const PxU32 index = shape.mIndexInActor;
 	PX_ASSERT(index!=0xffffffff);
 	PX_ASSERT(!isSqCompound()); // used in cases we know it is not a compound
 
@@ -336,7 +348,7 @@ Sq::PrunerData NpShapeManager::findSceneQueryData(const NpShape& shape) const
 
 Sq::PrunerData NpShapeManager::findSceneQueryData(const NpShape& shape, Sq::PrunerCompoundId& compoundId) const
 {
-	const PxU32 index = mShapes.find(&shape);
+	const PxU32 index = shape.mIndexInActor;
 	PX_ASSERT(index!=0xffffffff);
 
 	compoundId = mSqCompoundId;

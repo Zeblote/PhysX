@@ -213,6 +213,9 @@ private:
 					static const PxI32 ACTOR_COUNT_MASK = 0x7fffffff;
 					
 					volatile PxI32				mExclusiveAndActorCount;
+
+public:
+					PxU32						mIndexInActor = 0xffffffff;
 };
 
 }
