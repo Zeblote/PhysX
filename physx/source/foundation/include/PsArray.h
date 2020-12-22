@@ -205,6 +205,19 @@ class Array : protected Alloc
 	}
 
 	/*!
+	Returns pointer to data.
+	*/
+	PX_FORCE_INLINE const T* data() const
+	{
+		return mData;
+	}
+
+	PX_FORCE_INLINE T* data()
+	{
+		return mData;
+	}
+
+	/*!
 	Returns a reference to the first element of the array. Undefined if the array is empty.
 	\return a reference to the first element of the array
 	*/
